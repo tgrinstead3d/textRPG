@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Tile struct {
 	Name        string
@@ -39,36 +41,51 @@ func main() {
 	room6 := Tile{Name: "Final Room", Description: "Flickering torchlight casts shadows on cold stone walls. The floor, strewn with lifeless bodies, creates a somber scene. The interplay of light and shadows in the unsettling ambiance blurs the distinction between reality and illusion, enhancing the eerie atmosphere of the macabre room.", Exits: make(map[string]*Tile), Visited: false, Intro: "The flickering torchlight, like a dying ember, throws grotesque shadows that writhe and dance across the cold, damp stone walls. Beneath your feet, the uneven flagstones are slick with a viscous liquid that catches the errant glints of flame, revealing a horrifying truth – the floor is not stone, but a macabre mosaic of lifeless bodies, their sightless eyes reflecting the distorted firelight.\n\nThe air is thick with the cloying scent of decay, mingling with the acrid tang of burnt flesh and the metallic tang of blood. The silence is broken only by the erratic drip of moisture from unseen cracks in the ceiling, each drop echoing with a hollow, mournful chime.\n\nAs your eyes adjust to the gloom, you begin to discern the grisly details of your surroundings. The bodies, clad in tattered remnants of finery, are sprawled in unnatural contortions, their faces frozen in silent screams. Some clutch at empty air, their fingers clawed in rigor mortis, while others lie supine, their limbs splayed wide as if flung down in a moment of unimaginable terror.\n\nThe interplay of light and shadow plays tricks on your vision. Grotesque gargoyles carved into the walls seem to leer down at you, their stone fangs glinting in the firelight. Cobwebs, draped like ghostly shrouds, hang from the vaulted ceiling, and in their intricate strands, you swear you can see the spectral forms of those who met their demise in this accursed chamber.\n\nThe line between reality and illusion blurs, the macabre scene taking on a nightmarish quality. Is it the flickering torchlight or are the shadows truly dancing? Do the bodies twitch, or is it merely the play of your own overwrought imagination? The very air seems to crackle with unseen energy, charged with the lingering echoes of screams and the palpable weight of despair.\n\nYou take a hesitant step forward, the crunching of bone beneath your foot a stark reminder of the grim tableau that surrounds you. The stench intensifies, threatening to overwhelm you, and you press a hand to your nose, trying to shut out the overpowering cloying sweetness of decay.\n\nBut even as you turn to flee, a new sound catches your ear – a faint, rhythmic scraping from the far corner of the room. You strain to listen, your heart hammering against your ribs..."}
 
 	room1.Exits["west"] = &room5
-	room1.Exits["south"] = &room3
+	room1.Exits["south"] = &room2
 	room1.Exits["north"] = &room4
-	room1.Exits["east"] = &room2
-	room2.Exits["west"] = &room1
-	room3.Exits["north"] = &room1
+	room1.Exits["east"] = &room3
+	room3.Exits["west"] = &room1
+	room2.Exits["north"] = &room1
 	room4.Exits["south"] = &room1
 	room5.Exits["east"] = &room1
 	room5.Exits["north"] = &room6
 	room6.Exits["south"] = &room5
 
 	currentTile := &room1
-	player := Player{Name: "none", CurrentTile: currentTile, Inventory: []string{}, Bitten: false, Health: 100, Dead: false}
+	player := Player{Name: "none", CurrentTile: currentTile, Inventory: []string{"knife", "fishing line", "3 gold coins"}, Bitten: false, Health: 100, Dead: false}
 
-	fmt.Println("Who are you?")
+	ending := func() {
+		fmt.Println("")
+		fmt.Println("The relentless sun beats down on the parched earth, painting the endless dunes in a shimmering haze. Before you, nestled like a emerald jewel in the sun-scorched wasteland, lies the oasis of Al'Sharim. Crystal-clear water shimmers amidst a grove of swaying date palms, their fronds whispering secrets in the warm desert breeze.\n\nAs you approach, the scent of jasmine and spices hangs heavy in the air, carried on tendrils of smoke rising from mudbrick houses nestled beneath the palms. Cobblestone paths wind through the settlement, bustling with life. Merchants hawk their wares in colorful stalls, their voices weaving a melodious hum. Children chase each other, their laughter echoing off the sun-baked walls.\n\nA towering minaret pierces the azure sky, its call to prayer resonating across the oasis. A bustling marketplace lies at its base, overflowing with exotic fruits, woven tapestries, and handcrafted trinkets. Camel caravans rest nearby, their riders huddled in the shade, sharing stories and sipping cool mint tea.\n\nA cool, inviting stream meanders through the heart of the oasis, fed by a hidden spring. Gentle waterfalls cascade over smooth stones, forming turquoise pools that glimmer like sapphires. Lush grasses line the banks, dotted with vibrant wildflowers that dance in the breeze.\n\nBeyond the oasis, the harsh desert landscape resumes. Towering sand dunes, sculpted by relentless winds, rise in the distance, their peaks disappearing into the hazy horizon. A sense of mystery and danger hangs in the air, beckoning the adventurous spirit.\n\nBut within the oasis walls, a sense of peace and tranquility prevails. Al'Sharim offers a haven from the unforgiving desert, a place where weary travelers can rest, refresh, and embark on new adventures. Will you stay and unravel the secrets this enchanting oasis holds, or will you venture beyond its embrace into the vast, sun-scorched unknown?")
+		fmt.Println("Thank you for playing!")
+	}
+
+	help := func() {
+		fmt.Println("To play, type the direction you would like to go (north, south, east, or west) and press enter. \n\nTo interact with objects, type the object name and press enter. \n\nTo view your inventory, type \"inventory\" and press enter. \n\nTo view your health, type \"health\" and press enter. \n\nTo view your current location, type \"location\" and press enter. \n\nTo exit the game, type \"exit\" and press enter. \n\nTo view these instructions again, type \"help\"")
+		fmt.Scanln(&input)
+	}
+
+	listen := func() {
+		if input == "help" {
+			help()
+		} else if input == "inventory" {
+			fmt.Println(player.Inventory)
+		} else if input == "health" {
+			fmt.Println(player.Health)
+		} else if input == "location" {
+			fmt.Println(currentTile.Name)
+			fmt.Println(currentTile.Description)
+			printExits(currentTile)
+		}
+		fmt.Scanln(&input)
+	}
+
+	fmt.Println("Please enter your character's name:")
 	fmt.Scanln(&player.Name)
+	fmt.Println("To play, type the direction you would like to go (north, south, east, or west) and press enter. \n\nTo interact with objects, type the object name and press enter. \n\nTo view your inventory, type \"inventory\" and press enter. \n\nTo view your health, type \"health\" and press enter. \n\nTo view your current location, type \"location\" and press enter. \n\nTo exit the game, type \"exit\" and press enter. \n\nTo view these instructions again, type \"help\"")
+	fmt.Printf("\n\n The sun, a molten orb on the horizon, cast its warm glow across the cerulean expanse of the ocean. Gentle waves lapped at the weathered hull of the \"Salty Dog\", a seafaring vessel as comfortable and familiar to %s as his own skin. Today, however, the\"Salty Dog\" wasn't merely a fishing boat; it was a chariot carrying them towards adventure. Tales of monstrous krakens guarding sunken galleons laden with gold, whispered by weathered sailors in smoke-filled taverns, had spurred %s to explore this remote, uncharted corner of the sea. \n\n Excitement danced in his chest, mirroring the playful glint of sunlight on the water. The air was sweet with the tang of salt and brine, punctuated by the rhythmic creak of the ship's timbers and the soothing lull of the waves. As %s cast his line, the lure danced and twirled on the surface, a silver ballerina against the sapphire stage. Each gentle tug on the line sent a thrill through him, a promise of hidden bounty lurking in the depths. The day stretched on, languid and peaceful. Time seemed to dissolve into the endless blue, punctuated only by the rhythmic rise and fall of the boat and the occasional cry of a lone gull wheeling overhead. \n\n But then, in an instant, the serene tableau shattered. A bolt of lightning, impossibly vivid against the cloudless sky, ripped across the horizon. It was a celestial spear, crackling with raw power, aimed directly at their boat. Before %s could even register the impossible sight, the world exploded in a blinding flash of white. The deafening crack of thunder sent a tremor through the boat, nearly tossing him overboard. His ears sang, his vision blurred, and a jolt of electricity coursed through his body, leaving him tingling and numb. \n\n As the world faded to black, a chilling thought echoed in the void of his mind: they weren't alone in this vast ocean.", player.Name, player.Name, player.Name, player.Name)
 	fmt.Println("")
-	fmt.Println("Welcome to THE CURRENTS OF FATE, a text based adventure game by Tyler Grinstead.")
-	fmt.Println("********************")
-	fmt.Println("Exit the game at any time by typing 'exit'.")
-	fmt.Print("The journey begins on a serene fishing boat, gently bobbing on the surface of the open sea. " + player.Name + ", an avid fisherman, had set out to explore a remote and uncharted region, lured by tales of mythical sea creatures and hidden treasures. The day unfolded with a sense of tranquility as they cast their fishing line into the deep blue, the rhythmic sounds of the waves accompanying their solitary venture.")
-	fmt.Println("As your main character regains consciousness in the mysterious underwater cavern, the soft glow of bioluminescent coral casts an ethereal light, revealing the beauty of the submerged world around them. The air in the cavern is surprisingly fresh, and the gentle sound of water lapping against the rocky walls echoes through the chamber.")
-	fmt.Println("")
-	fmt.Println("The walls of the cavern are adorned with vibrant coral formations in various hues, creating a mesmerizing underwater tapestry. Schools of iridescent fish dart between the coral, their scales reflecting the ambient light. Large anemones sway gracefully with the subtle currents, creating a dance of colors and textures.")
-	fmt.Println("")
-	fmt.Println("In the South corner of the cavern, there's a serene water hole, its surface shimmering with reflections of the surrounding beauty. The water is crystal clear, inviting your character to explore its depths. As your character observes the water hole, they notice a subtle movement beneath the surface—a mysterious aquatic creature gracefully gliding through the depths.")
-	fmt.Println("")
-	fmt.Println("Three tunnels beckon in different directions, each offering a unique path for exploration. To the east, the tunnel is adorned with bioluminescent fungi, casting an eerie yet enchanting glow. To the west, a gentle current flows, carrying with it a chorus of underwater whispers. The north tunnel reveals a cavernous expanse with towering underwater rock formations, creating an otherworldly skyline.")
-	fmt.Println("")
-	fmt.Println("As " + player.Name + " stands at the crossroads of these tunnels, a layer of mystery is blanketing their surroundings. The journey ahead is uncertain, and the underwater world holds secrets waiting to be unveiled. The choice of which path to take is yours, and the adventure unfolds in the depths of this captivating underwater realm.")
-	fmt.Println("")
+	fmt.Println("You regain consciousness in a mysterious underwater cavern, the soft glow of bioluminescent coral casts an ethereal light, revealing the beauty of the submerged world around you. The air in the cavern is surprisingly fresh, and the gentle sound of water lapping against the rocky walls echoes through the chamber. \n\n The walls of the cavern are adorned with vibrant coral formations in various hues, creating a mesmerizing underwater tapestry. Schools of iridescent fish dart between the coral, their scales reflecting the ambient light. Large anemones sway gracefully with the subtle currents, creating a dance of colors and textures. \n\n In the South corner of the cavern, there's a serene water hole, its surface shimmering with reflections of the surrounding beauty. The water is crystal clear, inviting your character to explore its depths. As your character observes the water hole, they notice a subtle movement beneath the surface—a mysterious aquatic creature gracefully gliding through the depths. \n\n Three tunnels beckon in different directions, each offering a unique path for exploration. To the east, the tunnel is adorned with bioluminescent fungi, casting an eerie yet enchanting glow. To the west, a gentle current flows, carrying with it a chorus of underwater whispers. The north tunnel reveals a cavernous expanse with towering underwater rock formations, creating an otherworldly skyline. \n\n As \" + player.Name + \" stands at the crossroads of these tunnels, a layer of mystery is blanketing their surroundings. The journey ahead is uncertain, and the underwater world holds secrets waiting to be unveiled. The choice of which path to take is yours, and the adventure unfolds in the depths of this captivating underwater realm.")
 
 	for {
 		if currentTile.Name == "Final Room" {
@@ -84,26 +101,22 @@ func main() {
 				fmt.Scanln(&action)
 				if action == "kill" {
 					fmt.Println("You kill the man... Silence suddenly falls over the room. You attempt to leave the room but you are unable to reach the door. You are stuck here... Eventually you learn that the one you killed was once just like you... instead of accepting death you, instead, killed the attacker and locked yourself into hell. Once you finally are met with another who has entered this room you find yourself unable to control your body, you attack the person relentlessly, until they are dead. This happens over and over again until finally, you meet you are granted the sweet release of death. You're immediately greeted by darkness and complete silence. You begin to feel relief... until... Blinding light begins to pierce through your closed eyelids. You slowly open your eyes and realize you are standing in the middle of a vast desert.")
-					fmt.Println("")
-					fmt.Println("The relentless sun beats down on the parched earth, painting the endless dunes in a shimmering haze. Before you, nestled like a emerald jewel in the sun-scorched wasteland, lies the oasis of Al'Sharim. Crystal-clear water shimmers amidst a grove of swaying date palms, their fronds whispering secrets in the warm desert breeze.\n\nAs you approach, the scent of jasmine and spices hangs heavy in the air, carried on tendrils of smoke rising from mudbrick houses nestled beneath the palms. Cobblestone paths wind through the settlement, bustling with life. Merchants hawk their wares in colorful stalls, their voices weaving a melodious hum. Children chase each other, their laughter echoing off the sun-baked walls.\n\nA towering minaret pierces the azure sky, its call to prayer resonating across the oasis. A bustling marketplace lies at its base, overflowing with exotic fruits, woven tapestries, and handcrafted trinkets. Camel caravans rest nearby, their riders huddled in the shade, sharing stories and sipping cool mint tea.\n\nA cool, inviting stream meanders through the heart of the oasis, fed by a hidden spring. Gentle waterfalls cascade over smooth stones, forming turquoise pools that glimmer like sapphires. Lush grasses line the banks, dotted with vibrant wildflowers that dance in the breeze.\n\nBeyond the oasis, the harsh desert landscape resumes. Towering sand dunes, sculpted by relentless winds, rise in the distance, their peaks disappearing into the hazy horizon. A sense of mystery and danger hangs in the air, beckoning the adventurous spirit.\n\nBut within the oasis walls, a sense of peace and tranquility prevails. Al'Sharim offers a haven from the unforgiving desert, a place where weary travelers can rest, refresh, and embark on new adventures. Will you stay and unravel the secrets this enchanting oasis holds, or will you venture beyond its embrace into the vast, sun-scorched unknown?")
-					fmt.Println("Thank you for playing!")
+					ending()
 					break
 				} else if action == "be killed" {
 					fmt.Println("You accept your death, bravely. You close your eyes and feel the world around you disappear into the blackest black you didn't even know existed. Suddenly, though, a piercing bright light begins to pry into your senses. You slowly open your eyes and realize you are standing in the middle of a vast desert.")
-					fmt.Println("")
-					fmt.Println("The relentless sun beats down on the parched earth, painting the endless dunes in a shimmering haze. Before you, nestled like a emerald jewel in the sun-scorched wasteland, lies the oasis of Al'Sharim. Crystal-clear water shimmers amidst a grove of swaying date palms, their fronds whispering secrets in the warm desert breeze.\n\nAs you approach, the scent of jasmine and spices hangs heavy in the air, carried on tendrils of smoke rising from mudbrick houses nestled beneath the palms. Cobblestone paths wind through the settlement, bustling with life. Merchants hawk their wares in colorful stalls, their voices weaving a melodious hum. Children chase each other, their laughter echoing off the sun-baked walls.\n\nA towering minaret pierces the azure sky, its call to prayer resonating across the oasis. A bustling marketplace lies at its base, overflowing with exotic fruits, woven tapestries, and handcrafted trinkets. Camel caravans rest nearby, their riders huddled in the shade, sharing stories and sipping cool mint tea.\n\nA cool, inviting stream meanders through the heart of the oasis, fed by a hidden spring. Gentle waterfalls cascade over smooth stones, forming turquoise pools that glimmer like sapphires. Lush grasses line the banks, dotted with vibrant wildflowers that dance in the breeze.\n\nBeyond the oasis, the harsh desert landscape resumes. Towering sand dunes, sculpted by relentless winds, rise in the distance, their peaks disappearing into the hazy horizon. A sense of mystery and danger hangs in the air, beckoning the adventurous spirit.\n\nBut within the oasis walls, a sense of peace and tranquility prevails. Al'Sharim offers a haven from the unforgiving desert, a place where weary travelers can rest, refresh, and embark on new adventures. Will you stay and unravel the secrets this enchanting oasis holds, or will you venture beyond its embrace into the vast, sun-scorched unknown?")
-					fmt.Println("Thank you for playing!")
+					ending()
 					break
 				} else {
+					listen()
 					fmt.Println("Invalid input. Please type \"kill\" or \"be killed\".")
 				}
 			} else if input == "run" {
 				fmt.Println("You attempt to run away but you aren't fast enough. You briefly feel a sharp puncture into your back and then all existence quickly snaps away. There is nothing but black... then from the darkness your vision begins to fade in. Blinding light begins to penetrate your senses.")
-				fmt.Println("")
-				fmt.Println("The relentless sun beats down on the parched earth, painting the endless dunes in a shimmering haze. Before you, nestled like a emerald jewel in the sun-scorched wasteland, lies the oasis of Al'Sharim. Crystal-clear water shimmers amidst a grove of swaying date palms, their fronds whispering secrets in the warm desert breeze.\n\nAs you approach, the scent of jasmine and spices hangs heavy in the air, carried on tendrils of smoke rising from mudbrick houses nestled beneath the palms. Cobblestone paths wind through the settlement, bustling with life. Merchants hawk their wares in colorful stalls, their voices weaving a melodious hum. Children chase each other, their laughter echoing off the sun-baked walls.\n\nA towering minaret pierces the azure sky, its call to prayer resonating across the oasis. A bustling marketplace lies at its base, overflowing with exotic fruits, woven tapestries, and handcrafted trinkets. Camel caravans rest nearby, their riders huddled in the shade, sharing stories and sipping cool mint tea.\n\nA cool, inviting stream meanders through the heart of the oasis, fed by a hidden spring. Gentle waterfalls cascade over smooth stones, forming turquoise pools that glimmer like sapphires. Lush grasses line the banks, dotted with vibrant wildflowers that dance in the breeze.\n\nBeyond the oasis, the harsh desert landscape resumes. Towering sand dunes, sculpted by relentless winds, rise in the distance, their peaks disappearing into the hazy horizon. A sense of mystery and danger hangs in the air, beckoning the adventurous spirit.\n\nBut within the oasis walls, a sense of peace and tranquility prevails. Al'Sharim offers a haven from the unforgiving desert, a place where weary travelers can rest, refresh, and embark on new adventures. Will you stay and unravel the secrets this enchanting oasis holds, or will you venture beyond its embrace into the vast, sun-scorched unknown?")
-				fmt.Println("Thank you for playing!")
+				ending()
 				break
 			} else {
+				listen()
 				fmt.Println("Invalid input")
 			}
 		}
@@ -128,7 +141,11 @@ func main() {
 			fmt.Println("Thanks for playing!")
 			break
 		} else {
+			listen()
 			fmt.Println("Invalid input")
+		}
+		if input == "exit" {
+			break
 		}
 	}
 }
